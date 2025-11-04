@@ -18,11 +18,7 @@ public class DB_CONNECTOR{
     		System.err.println("Fehler: "+e.getMessage());
     		throw e;
     	}
-           
-           
-
-            
-                
+               
     }
 }
 
