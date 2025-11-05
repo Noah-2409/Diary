@@ -5,26 +5,28 @@ import java.awt.Dimension;
 import java.sql.SQLException;
 
 import javax.swing.*;
-/*--------------------------------Probleme--------------------------
+/*----------------------------------------------------------------------------Problems------------
  * 
+ *  
  */
 
 public class DiaryGUI {
 	private static JFrame frame = new JFrame();
 	private static CardLayout cardManager = new CardLayout();
 	private static JPanel cardContainer = new JPanel();
+	
 	public static void main(String[] args) {
 
-		//------------------------------------BasicSetUp-----
+		//-------------------------------------------------------------------BasicSetUp-----
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 		frame.setSize(500,500);
 		frame.add(cardContainer);
 		cardContainer.setLayout(cardManager);
-		//--------------------------------Build--------------
+		//---------------------------------------------------------------------FrameBuild----
 		buildHomeFrame();
 		buildSearchFrame();
 		buildEditFrame();
-		//-----------------------------Begin-----------------
+		//----------------------------------------------------------------------Begin--------
 		cardManager.show(cardContainer,"Home");
 		frame.setVisible(true);
 	
@@ -33,25 +35,25 @@ public class DiaryGUI {
 		JPanel panelHome = new JPanel();
 		panelHome.setLayout(new BorderLayout());
 		cardContainer.add(panelHome,"Home");
-		//----------------Labels-----------------------------
+		//----------------------------------------------------------------------Labels-------
 		JLabel labelTextEingabe = new JLabel("Entry: ");
 		JLabel labelTextEingabeTitel =new JLabel("Enter Title: ");
 		JLabel labelButtonSave = new JLabel("Save");
 		JLabel labelButtonSearch = new JLabel("Search");
 		JLabel labelPanelHome = new JLabel("HomeScreen");
 		
-		//---------------Buttons-----------------------
+		//-----------------------------------------------------------------------Buttons------
 		JButton buttonSave = new JButton();
 		JButton buttonSearch = new JButton();
 		buttonSave.add(labelButtonSave);
 		buttonSearch.add(labelButtonSearch);
-		//-----------------TextField-------------------------
+		//---------------------------------------------------------------------TextField-------
 		JTextArea textEingabe = new JTextArea(5,40);
 		JTextField textEingabeTitel = new JTextField(20);
 		JScrollPane paneTextArea = new JScrollPane(textEingabe);
 		textEingabe.setLineWrap(true);
 		textEingabe.setWrapStyleWord(true);
-		//------------------panels------------------------
+		//----------------------------------------------------------------------panels--------
 		JPanel panelNorth = new JPanel();
 		JPanel panelCenter = new JPanel();
 		JPanel panelSouth = new JPanel();
@@ -73,7 +75,7 @@ public class DiaryGUI {
 		panelCenterInCenter.add(paneTextArea);
 		panelSouth.add(buttonSave);
 		panelSouth.add(buttonSearch);
-		//-------------------------Action-------------------------
+		//----------------------------------------------------------------------Button-Action-----
 		buttonSearch.addActionListener(e->{
 			cardManager.show(cardContainer,"Search");
 		});
@@ -81,6 +83,8 @@ public class DiaryGUI {
 			if(!textEingabe.getText().trim().isEmpty()) {
 				TaskDo.insertTask(textEingabe.getText(),textEingabeTitel.getText());
 			}
+			textEingabe.setText(null);
+			textEingabeTitel.setText(null);
 		});
 		
 	}
@@ -89,7 +93,7 @@ public class DiaryGUI {
 		JPanel panelSearch = new JPanel();
 		panelSearch.setLayout(new BorderLayout());
 		cardContainer.add(panelSearch,"Search");
-		//----------------Labels-----------------------------
+		//--------------------------------------------------------------------------Labels-------
 		JLabel labelDay = new JLabel("Day: ");
 		JLabel labelMonth = new JLabel("Month: ");
 		JLabel labelYear = new JLabel("Year: ");
@@ -97,12 +101,12 @@ public class DiaryGUI {
 		JLabel labelButtonBack = new JLabel("Back");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
 		
-		//---------------Buttons-----------------------
+		//-------------------------------------------------------------------------Buttons-------
 		JButton buttonBack = new JButton();
 		JButton buttonEnter = new JButton();
 		buttonBack.add(labelButtonBack);
 		buttonEnter.add(labelButtonEnter);
-		//-----------------TextField/Area/List-------------------------
+		//-----------------------------------------------------------TextField/Area/List----------
 		JTextField fieldDay = new JTextField(2);
 		JTextField fieldMonth = new JTextField(2);
 		JTextField fieldYear = new JTextField(3);
@@ -116,50 +120,60 @@ public class DiaryGUI {
 		paneList.setPreferredSize(new Dimension(250,150));
 		
 		
-		//------------------panels------------------------
+		//-----------------------------------------------------------------------panels---------
 		JPanel panelNorth = new JPanel();
 		JPanel panelCenter = new JPanel();
 		JPanel panelSouth = new JPanel();
+		JPanel panelNorthInCenter = new JPanel();
+		JPanel panelCenterInCenter = new JPanel();
+		panelCenter.setLayout(new BorderLayout());
+		
 		panelSearch.add(panelNorth,BorderLayout.NORTH);
 		panelSearch.add(panelCenter,BorderLayout.CENTER);
 		panelSearch.add(panelSouth,BorderLayout.SOUTH);
+		panelCenter.add(panelNorthInCenter,BorderLayout.NORTH);
+		panelCenter.add(panelCenterInCenter,BorderLayout.CENTER);
 		
 		panelNorth.add(labelPanelSearch);
 		panelSouth.add(buttonBack);
-		panelCenter.add(labelDay);
-		panelCenter.add(fieldDay);
-		panelCenter.add(labelMonth);
-		panelCenter.add(fieldMonth);
-		panelCenter.add(labelYear);
-		panelCenter.add(fieldYear);
-		panelCenter.add(buttonEnter);
-		panelCenter.add(paneList);
-		//---------------------Action----------------------------
+		panelNorthInCenter.add(labelDay);
+		panelNorthInCenter.add(fieldDay);
+		panelNorthInCenter.add(labelMonth);
+		panelNorthInCenter.add(fieldMonth);
+		panelNorthInCenter.add(labelYear);
+		panelNorthInCenter.add(fieldYear);
+		panelNorthInCenter.add(buttonEnter);
+		panelCenterInCenter.add(paneList);
+		//---------------------------------------------------------------Button-Action-----------
 		buttonBack.addActionListener(e->{
 			entryListModel.clear();
 			cardManager.show(cardContainer,"Home");
 		});
 		buttonEnter.addActionListener(e->{
-			entryListModel.clear();
-			int i=0;
-			while (true) {
-				try{
-				 String storyEntry = TaskDo.getEntryStoryOrTitle(Integer.parseInt(fieldYear.getText()),
-						Integer.parseInt(fieldMonth.getText()),
-						Integer.parseInt(fieldDay.getText()), 
-						"title", i);
-				 
-				if(!storyEntry.trim().equals("Keine weitere Ergebnisse")) {
-					entryListModel.addElement(storyEntry);
-					i++;
-				}else break;
+			if(TaskDo.isValidDate(fieldDay,fieldMonth,fieldYear)) {
+
+				entryListModel.clear();
+				int i=0;
+				while (true) {
+					try{
+					 String storyEntry = TaskDo.getStoryOrTitle(Integer.parseInt(fieldYear.getText()),
+							Integer.parseInt(fieldMonth.getText()),
+							Integer.parseInt(fieldDay.getText()), 
+							"title", i);
+					 
+					if(!storyEntry.trim().equals("Keine weitere Ergebnisse")) {
+						entryListModel.addElement(storyEntry);
+						i++;
+					}else break;
+					
+					}catch(SQLException E) {
+						System.out.println("Fehler: "+E.getMessage());
+					}
+					
+					}
 				
-				}catch(SQLException E) {
-					System.out.println("Fehler: "+E.getMessage());
-				}
-				
-				}
-	
+			
+			}
 		});
 		
 	
