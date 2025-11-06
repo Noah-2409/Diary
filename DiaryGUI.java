@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
- * 
+ * Fehler anzeige mir JDialog erstellen und Jtextfield mit anwendungs fehlerr!!
  *  
  */
 
@@ -60,15 +60,19 @@ public class DiaryGUI {
 		JPanel panelNorthInCenter = new JPanel();
 		JPanel panelCenterInCenter = new JPanel();
 		panelCenter.setLayout(new BorderLayout());
+		panelNorth.setLayout(new BorderLayout());
+		JPanel panelWestInNorth = new JPanel();
 		
 		panelHome.add(panelNorth,BorderLayout.NORTH);
 		panelHome.add(panelCenter,BorderLayout.CENTER);
 		panelHome.add(panelSouth,BorderLayout.SOUTH);
 		panelCenter.add(panelNorthInCenter,BorderLayout.NORTH);
+		
 		panelCenter.add(panelCenterInCenter,BorderLayout.CENTER);
+		panelNorth.add(panelWestInNorth,BorderLayout.WEST);
 		
 		
-		panelNorth.add(labelPanelHome);
+		panelWestInNorth.add(labelPanelHome);
 		panelNorthInCenter.add(labelTextEingabeTitel);
 		panelNorthInCenter.add(textEingabeTitel);
 		panelCenterInCenter.add(labelTextEingabe);
@@ -100,6 +104,7 @@ public class DiaryGUI {
 		JLabel labelButtonEnter = new JLabel("Enter");
 		JLabel labelButtonBack = new JLabel("Back");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
+		//------------------------------------------------------------------------JDialog---------
 		
 		//-------------------------------------------------------------------------Buttons-------
 		JButton buttonBack = new JButton();
@@ -110,14 +115,24 @@ public class DiaryGUI {
 		JTextField fieldDay = new JTextField(2);
 		JTextField fieldMonth = new JTextField(2);
 		JTextField fieldYear = new JTextField(3);
-		JTextArea outputEntries = new JTextArea(5,40);
-		outputEntries.setLineWrap(true);
-		outputEntries.setWrapStyleWord(true);
+		JTextArea inputEntries = new JTextArea(5,40);
+		JTextArea outputStory = new JTextArea(10,40);
+		JScrollPane paneOutputStory = new JScrollPane(outputStory);
+		
+		outputStory.setLineWrap(true);
+		outputStory.setWrapStyleWord(true);
+		
+		outputStory.setEditable(false);
+		paneOutputStory.setVisible(false);
+		
+		inputEntries.setLineWrap(true);
+		inputEntries.setWrapStyleWord(true);
 		
 		DefaultListModel<String> entryListModel = new DefaultListModel<>();
 		JList<String> entryList = new JList<>(entryListModel);
 		JScrollPane paneList = new JScrollPane(entryList);
-		paneList.setPreferredSize(new Dimension(250,150));
+		paneList.setPreferredSize(new Dimension(250,100));
+		paneList.setVisible(false);
 		
 		
 		//-----------------------------------------------------------------------panels---------
@@ -127,14 +142,18 @@ public class DiaryGUI {
 		JPanel panelNorthInCenter = new JPanel();
 		JPanel panelCenterInCenter = new JPanel();
 		panelCenter.setLayout(new BorderLayout());
+		JPanel panelWestInNorth = new JPanel();
+		panelNorth.setLayout(new BorderLayout());
+		
 		
 		panelSearch.add(panelNorth,BorderLayout.NORTH);
 		panelSearch.add(panelCenter,BorderLayout.CENTER);
 		panelSearch.add(panelSouth,BorderLayout.SOUTH);
 		panelCenter.add(panelNorthInCenter,BorderLayout.NORTH);
 		panelCenter.add(panelCenterInCenter,BorderLayout.CENTER);
+		panelNorth.add(panelWestInNorth,BorderLayout.WEST);
 		
-		panelNorth.add(labelPanelSearch);
+		panelWestInNorth.add(labelPanelSearch);
 		panelSouth.add(buttonBack);
 		panelNorthInCenter.add(labelDay);
 		panelNorthInCenter.add(fieldDay);
@@ -144,22 +163,29 @@ public class DiaryGUI {
 		panelNorthInCenter.add(fieldYear);
 		panelNorthInCenter.add(buttonEnter);
 		panelCenterInCenter.add(paneList);
+		panelCenterInCenter.add(paneOutputStory);
 		//---------------------------------------------------------------Button-Action-----------
 		buttonBack.addActionListener(e->{
-			entryListModel.clear();
+			entryList.clearSelection();
+			outputStory.setText(null);
+			paneOutputStory.setVisible(false);
+			paneList.setVisible(false);
+			panelCenterInCenter.revalidate();
 			cardManager.show(cardContainer,"Home");
+			
 		});
+		
 		buttonEnter.addActionListener(e->{
+			
 			if(TaskDo.isValidDate(fieldDay,fieldMonth,fieldYear)) {
-
 				entryListModel.clear();
 				int i=0;
+				
 				while (true) {
 					try{
-					 String storyEntry = TaskDo.getStoryOrTitle(Integer.parseInt(fieldYear.getText()),
+					 String storyEntry = TaskDo.getTitleFromDate(Integer.parseInt(fieldYear.getText()),
 							Integer.parseInt(fieldMonth.getText()),
-							Integer.parseInt(fieldDay.getText()), 
-							"title", i);
+							Integer.parseInt(fieldDay.getText()), i);
 					 
 					if(!storyEntry.trim().equals("Keine weitere Ergebnisse")) {
 						entryListModel.addElement(storyEntry);
@@ -172,8 +198,36 @@ public class DiaryGUI {
 					
 					}
 				
-			
 			}
+			paneList.setVisible(true);
+			panelCenterInCenter.revalidate();
+			
+		});
+		entryList.addListSelectionListener(e->{
+			if(entryList.getSelectedValue()!=null) {
+				
+				int day =Integer.parseInt(fieldDay.getText());
+			int month = Integer.parseInt(fieldMonth.getText());
+			int year = Integer.parseInt(fieldYear.getText());
+			
+			String title = entryList.getSelectedValue();
+			
+			if(!e.getValueIsAdjusting()) {
+				paneList.setVisible(false);
+				
+				try{
+					outputStory.setText(TaskDo.getStoryFromDate(year, month, day,title));
+				}catch(SQLException E) {
+					outputStory.setText("Fehler: "+E.getMessage());
+				}
+				paneOutputStory.setVisible(true);
+				panelCenterInCenter.revalidate();
+			}
+			}
+			
+			
+			
+			
 		});
 		
 	

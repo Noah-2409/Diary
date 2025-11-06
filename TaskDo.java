@@ -3,8 +3,7 @@ package diary;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.swing.JTextField;
 /*-----------------------------Probleme----------------------------------
@@ -31,10 +30,10 @@ public class TaskDo {
 		}
 	}
 
-	public static String getStoryOrTitle(int year, int month, int day, String attribut, int index) throws SQLException {
+	public static String getTitleFromDate(int year, int month, int day, int index) throws SQLException {
 		String ergebnis = "Keine weitere Ergebnisse";
 		LocalDate date = LocalDate.of(year, month, day);
-		String query = "SELECT " + attribut + " FROM diary_entry WHERE date=?";
+		String query = "SELECT title FROM diary_entry WHERE date=?";
 
 		try (Connection connect = DB_CONNECTOR.getConnection();
 				PreparedStatement stmt = connect.prepareStatement(query)) {
@@ -43,7 +42,7 @@ public class TaskDo {
 				int i = 0;
 				while (rs.next()) {
 					if (i == index) {
-						ergebnis = rs.getString(attribut);
+						ergebnis = rs.getString("title");
 						break;
 					}
 					i++;
@@ -57,6 +56,32 @@ public class TaskDo {
 		} catch (SQLException e) {
 			return "Fehler: " + e.getMessage();
 		}
+	}
+public static String getStoryFromDate(int year, int month, int day,String title) throws SQLException{
+
+	String ergebnis;
+	LocalDate date = LocalDate.of(year, month, day);
+	String query = "SELECT story FROM diary_entry WHERE date=? AND title=?";
+
+	try (Connection connect = DB_CONNECTOR.getConnection();
+			PreparedStatement stmt = connect.prepareStatement(query)) {
+		stmt.setDate(1, java.sql.Date.valueOf(date));
+		stmt.setString(2,title);
+		try (ResultSet rs = stmt.executeQuery()) {
+			rs.next();
+			ergebnis = rs.getString("story");
+			return ergebnis;
+
+		} catch (SQLException e) {
+			return "Fehler: " + e.getMessage();
+		}
+		
+		
+		
+	} catch (SQLException e) {
+		return "Fehler: " + e.getMessage();
+	}
+
 	}
 
 	public static boolean isValidDate(JTextField fieldDay, JTextField fieldMonth, JTextField fieldYear) {
