@@ -7,8 +7,8 @@ import java.time.format.DateTimeParseException;
 
 import javax.swing.JTextField;
 /*-----------------------------Probleme----------------------------------
- * eintragen von datum im format DD-MM-YYYY geht nicht nach implementierung von IsValidDate
- * vllt methode nochmal nach fehlern checken
+ * erstelle ein methode welche aus der daten bank sellect * FROM diary abfragt.
+ * am besten soll die methode irgenwei eine tabelle mit zwei zeilen ausgeben einmal datum von eintrag und titel von allen einträgen 
  * 
  * 
  */
