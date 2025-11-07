@@ -197,10 +197,11 @@ public class DiaryGUI {
 					}
 					
 					}
-				
+				paneList.setVisible(true);
+				panelCenterInCenter.revalidate();
 			}
-			paneList.setVisible(true);
-			panelCenterInCenter.revalidate();
+			
+			
 			
 		});
 		entryList.addListSelectionListener(e->{
@@ -213,7 +214,7 @@ public class DiaryGUI {
 			String title = entryList.getSelectedValue();
 			
 			if(!e.getValueIsAdjusting()) {
-				paneList.setVisible(false);
+				
 				
 				try{
 					outputStory.setText(TaskDo.getStoryFromDate(year, month, day,title));

@@ -85,7 +85,10 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 	}
 
 	public static boolean isValidDate(JTextField fieldDay, JTextField fieldMonth, JTextField fieldYear) {
-		try {
+		if(!fieldDay.getText().isEmpty()&&
+				!fieldMonth.getText().isEmpty()&&
+				!fieldYear.getText().isEmpty()) {
+			try {
 			if (fieldDay.getText().length() < 2) {
 				fieldDay.setText("0" + fieldDay.getText());
 			}
@@ -98,6 +101,9 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 		} catch (DateTimeParseException e) {
 			return false;
 		}
+		}
+		return false;
+		
 	}
 
 }
