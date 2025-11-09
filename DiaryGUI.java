@@ -8,6 +8,9 @@ import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
  *die paneList soll beim aktivieren von search button alle daten mit passenden titeln ausspucken
  *
+ *
+ *edit frame muss erstellt werden . build frame darf nicht in einer button aktion implementiert werden sonst 
+ *werden componente nimmer neu erstellt 
  */
 
 public class DiaryGUI {
@@ -25,7 +28,7 @@ public class DiaryGUI {
 		//---------------------------------------------------------------------FrameBuild----
 		buildHomeFrame();
 		buildSearchFrame();
-		//buildEditFrame(); wird erst gebaut wenn Edit button aktiv wird!
+		buildEditFrame();
 		//----------------------------------------------------------------------Begin--------
 		cardManager.show(cardContainer,"Home");
 		frame.setVisible(true);
@@ -104,7 +107,7 @@ public class DiaryGUI {
 		JLabel labelButtonEnter = new JLabel("Enter");
 		JLabel labelButtonBack = new JLabel("Back");
 		JLabel labelButtonEdit = new JLabel("Edit");
-		JLabel labelAllEntries = new JLabel("All entry titles with date: ");
+		JLabel labelAllEntries = new JLabel("All titles : ");
 		JLabel labelTitles = new JLabel("Titles: ");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
 		//-------------------------------------------------------------------------Buttons-------
@@ -134,7 +137,26 @@ public class DiaryGUI {
 		DefaultListModel<String> entryListModel = new DefaultListModel<>();
 		JList<String> entryList = new JList<>(entryListModel);
 		JScrollPane paneList = new JScrollPane(entryList);
-		paneList.setPreferredSize(new Dimension(250,300));
+		paneList.setPreferredSize(new Dimension(250,100));
+		paneList.setVisible(false);
+		
+		DefaultListModel<String> allEntryListModel = new DefaultListModel<>();
+		JList<String> allEntryList = new JList<>(allEntryListModel);
+		JScrollPane paneAllList = new JScrollPane(allEntryList);
+		paneAllList.setPreferredSize(new Dimension(250,100));
+		
+		try {
+			int i= 0;
+			while(!TaskDo.allEntries().get(i).isEmpty()) {
+				allEntryListModel.addElement(TaskDo.allEntries().get(i));	
+				i++;
+			}
+				
+		}catch(SQLException e) {
+			System.err.println("Fehler: "+e.getMessage());
+		}catch(IndexOutOfBoundsException e) {
+			
+		}
 		
 		
 		//-----------------------------------------------------------------------panels---------
@@ -169,17 +191,20 @@ public class DiaryGUI {
 		panelCenterInCenter.add(labelTitles);
 		labelTitles.setVisible(false);
 		panelCenterInCenter.add(labelAllEntries);
+		panelCenterInCenter.add(paneAllList);
 		panelCenterInCenter.add(paneList);
 		panelCenterInCenter.add(paneOutputStory);
 		//---------------------------------------------------------------Button-Action-----------
 		buttonBack.addActionListener(e->{
 			entryList.clearSelection();
+			allEntryList.clearSelection();
+			paneList.setVisible(false);
+			paneAllList.setVisible(true);
 			outputStory.setText(null);
 			paneOutputStory.setVisible(false);
 			entryListModel.clear();
 			labelAllEntries.setVisible(true);
 			labelTitles.setVisible(false);
-			paneList.setPreferredSize(new Dimension(250,300));
 			panelCenterInCenter.revalidate();
 			buttonEdit.setVisible(false);
 			panelSouth.revalidate();
@@ -192,7 +217,7 @@ public class DiaryGUI {
 			if(TaskDo.isValidDate(fieldDay,fieldMonth,fieldYear)) {
 				labelAllEntries.setVisible(false);
 				labelTitles.setVisible(true);
-				paneList.setPreferredSize( new Dimension(250,100));
+				paneAllList.setVisible(false);
 				entryListModel.clear();
 				int i=0;
 				
@@ -221,7 +246,8 @@ public class DiaryGUI {
 		});
 		entryList.addListSelectionListener(e->{
 			if(entryList.getSelectedValue()!=null) {
-
+				outputStory.setText(null);
+				
 				int day =Integer.parseInt(fieldDay.getText());
 			int month = Integer.parseInt(fieldMonth.getText());
 			int year = Integer.parseInt(fieldYear.getText());
@@ -238,12 +264,41 @@ public class DiaryGUI {
 				}
 				paneOutputStory.setVisible(true);
 				panelCenterInCenter.revalidate();
-				
+		
 				buttonEdit.setVisible(true);
 				panelSouth.revalidate();
 			}
 			}
 			
+		});
+		
+		allEntryList.addListSelectionListener(e->{
+			
+			if(allEntryList.getSelectedValue()!=null) {
+			if(!e.getValueIsAdjusting()) {
+				
+				outputStory.setText(null);
+				
+				String selectedValue = allEntryList.getSelectedValue();
+				
+				int year= Integer.parseInt(selectedValue.substring(0,4));
+				int month=Integer.parseInt(selectedValue.substring(5,7));
+				int day=Integer.parseInt(selectedValue.substring(8,10));
+				
+				String title = selectedValue.substring(13).trim();
+				
+				try{
+					outputStory.setText(TaskDo.getStoryFromDate(year, month, day,title));
+				}catch(SQLException E) {
+					outputStory.setText("Fehler: "+E.getMessage());
+				}
+				paneOutputStory.setVisible(true);
+				panelCenterInCenter.revalidate();
+				
+				buttonEdit.setVisible(true);
+				panelSouth.revalidate();
+			}
+			}
 		});
 		
 	

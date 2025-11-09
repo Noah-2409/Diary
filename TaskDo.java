@@ -3,7 +3,8 @@ package diary;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTextField;
 /*-----------------------------Probleme----------------------------------
@@ -16,7 +17,7 @@ import javax.swing.JTextField;
 public class TaskDo {
 	public static void insertTask(String story, String title) {
 
-		String query = "INSERT INTO diary_entry(date,story,title) VALUES(?,?,?)";
+		String query = "INSERT INTO diary_entry(date,story,title) VALUES(?,?,?);";
 
 		try (Connection connect = DB_CONNECTOR.getConnection();
 				PreparedStatement stmt = connect.prepareStatement(query)) {
@@ -33,7 +34,7 @@ public class TaskDo {
 	public static String getTitleFromDate(int year, int month, int day, int index) throws SQLException {
 		String ergebnis = "Keine weitere Ergebnisse";
 		LocalDate date = LocalDate.of(year, month, day);
-		String query = "SELECT title FROM diary_entry WHERE date=?";
+		String query = "SELECT title FROM diary_entry WHERE date=?;";
 
 		try (Connection connect = DB_CONNECTOR.getConnection();
 				PreparedStatement stmt = connect.prepareStatement(query)) {
@@ -61,7 +62,7 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 
 	String ergebnis;
 	LocalDate date = LocalDate.of(year, month, day);
-	String query = "SELECT story FROM diary_entry WHERE date=? AND title=?";
+	String query = "SELECT story FROM diary_entry WHERE date=? AND title=?;";
 
 	try (Connection connect = DB_CONNECTOR.getConnection();
 			PreparedStatement stmt = connect.prepareStatement(query)) {
@@ -104,6 +105,30 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 		}
 		return false;
 		
+	}
+	public static List<String> allEntries()  throws SQLException{
+		List<String> list =new  ArrayList<>();
+		String query = "SELECT date,title FROM diary_entry";
+		
+		try(Connection connect =DB_CONNECTOR.getConnection();
+				PreparedStatement stmt = connect.prepareStatement(query)){
+			try(ResultSet rs = stmt.executeQuery()){
+				while(rs.next()) {
+					String date = rs.getDate("date").toString();
+					String title = rs.getString("title");
+					
+					list.add(date+" | "+title);
+				}
+			}catch(SQLException e) {
+				throw e;
+			}
+			
+			return list;
+			
+		}catch(SQLException e) {
+			throw e;
+			
+		}
 	}
 
 }
