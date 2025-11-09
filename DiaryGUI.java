@@ -3,14 +3,12 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
- *die paneList soll beim aktivieren von search button alle daten mit passenden titeln ausspucken
- *
- *
- *edit frame muss erstellt werden . build frame darf nicht in einer button aktion implementiert werden sonst 
- *werden componente nimmer neu erstellt 
+ * die buttonenter aktion brauch zu lange um ergebnisse zu laden . finde ein weg um es zu optimieren 
+ * 
  */
 
 public class DiaryGUI {
@@ -25,13 +23,15 @@ public class DiaryGUI {
 		frame.setSize(500,500);
 		frame.add(cardContainer);
 		cardContainer.setLayout(cardManager);
+		
 		//---------------------------------------------------------------------FrameBuild----
 		buildHomeFrame();
 		buildSearchFrame();
 		buildEditFrame();
 		//----------------------------------------------------------------------Begin--------
-		cardManager.show(cardContainer,"Home");
 		frame.setVisible(true);
+		cardManager.show(cardContainer,"Home");
+		
 	
 	}
 	private static void buildHomeFrame() {
@@ -147,8 +147,9 @@ public class DiaryGUI {
 		
 		try {
 			int i= 0;
-			while(!TaskDo.allEntries().get(i).isEmpty()) {
-				allEntryListModel.addElement(TaskDo.allEntries().get(i));	
+			List<String> list = TaskDo.allEntries();
+			while(!list.get(i).isEmpty()) {
+				allEntryListModel.addElement(list.get(i));	
 				i++;
 			}
 				
@@ -229,6 +230,7 @@ public class DiaryGUI {
 					 
 					if(!storyEntry.trim().equals("Keine weitere Ergebnisse")) {
 						entryListModel.addElement(storyEntry);
+						
 						i++;
 					}else break;
 					
@@ -285,7 +287,7 @@ public class DiaryGUI {
 				int month=Integer.parseInt(selectedValue.substring(5,7));
 				int day=Integer.parseInt(selectedValue.substring(8,10));
 				
-				String title = selectedValue.substring(13).trim();
+				String title = selectedValue.substring(13);
 				
 				try{
 					outputStory.setText(TaskDo.getStoryFromDate(year, month, day,title));

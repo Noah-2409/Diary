@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.swing.JTextField;
 /*-----------------------------Probleme----------------------------------
- * erstelle ein methode welche aus der daten bank sellect * FROM diary abfragt.
- * am besten soll die methode irgenwei eine tabelle mit zwei zeilen ausgeben einmal datum von eintrag und titel von allen einträgen 
  * 
  * 
  */
