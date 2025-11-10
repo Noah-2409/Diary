@@ -27,7 +27,6 @@ public class DiaryGUI {
 		//---------------------------------------------------------------------FrameBuild----
 		buildHomeFrame();
 		buildSearchFrame();
-		buildEditFrame();
 		//----------------------------------------------------------------------Begin--------
 		frame.setVisible(true);
 		cardManager.show(cardContainer,"Home");
@@ -107,6 +106,8 @@ public class DiaryGUI {
 		JLabel labelButtonEnter = new JLabel("Enter");
 		JLabel labelButtonBack = new JLabel("Back");
 		JLabel labelButtonEdit = new JLabel("Edit");
+		JLabel labelButtonDone = new JLabel("Done");
+		JLabel labelButtonDelete = new JLabel("Delete");
 		JLabel labelAllEntries = new JLabel("All titles : ");
 		JLabel labelTitles = new JLabel("Titles: ");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
@@ -114,6 +115,10 @@ public class DiaryGUI {
 		JButton buttonBack = new JButton();
 		JButton buttonEnter = new JButton();
 		JButton buttonEdit = new JButton();
+		JButton buttonDone = new JButton();
+		JButton buttonDelete = new JButton();
+		buttonDone.add(labelButtonDone);
+		buttonDelete.add(labelButtonDelete);
 		buttonBack.add(labelButtonBack);
 		buttonEnter.add(labelButtonEnter);
 		buttonEdit.add(labelButtonEdit);
@@ -296,33 +301,30 @@ public class DiaryGUI {
 				}
 				paneOutputStory.setVisible(true);
 				panelCenterInCenter.revalidate();
-				
+				buttonDone.setVisible(false);
+				buttonDelete.setVisible(false);
+				buttonEdit.setVisible(true);
+				buttonBack.setVisible(true);
 				buttonEdit.setVisible(true);
 				panelSouth.revalidate();
 			}
 			}
 		});
+		buttonEdit.addActionListener(e->{
+			buttonBack.setVisible(false);
+			buttonEdit.setVisible(false);
+			buttonDone.setVisible(true);
+			buttonDelete.setVisible(true);
+			panelSouth.add(buttonDone);
+			panelSouth.add(buttonDelete);
+			panelSouth.revalidate();
+			
+			
+		});
 		
-	
-	}
-	private static void buildEditFrame() {
-		JPanel panelBuild = new JPanel();
-		panelBuild.setLayout(new BorderLayout());
-		cardContainer.add(panelBuild,"Build");
-	//--------------------------------------------------------------------------Labels-------
-	
-	//------------------------------------------------------------------------JDialog---------
-		
-	//-------------------------------------------------------------------------Buttons-------
-		
-	//-----------------------------------------------------------TextField/Area/List----------
-		
-	//-----------------------------------------------------------------------panels---------
-		
-	//---------------------------------------------------------------Button-Action-----------
 		
 	}
-}
+	}
 
 
 
