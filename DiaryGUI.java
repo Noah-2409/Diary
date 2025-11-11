@@ -271,9 +271,10 @@ public class DiaryGUI {
 				}
 				paneOutputStory.setVisible(true);
 				panelCenterInCenter.revalidate();
-		
+				allEntryList.setSelectedValue(e,false);
 				buttonEdit.setVisible(true);
 				panelSouth.revalidate();
+				Edit(day,month,year,title);
 			}
 			}
 			
@@ -306,21 +307,54 @@ public class DiaryGUI {
 				buttonEdit.setVisible(true);
 				buttonBack.setVisible(true);
 				buttonEdit.setVisible(true);
+				entryList.setSelectedValue(e,false);
 				panelSouth.revalidate();
+				Edit(day,month,year,title);
+				
 			}
 			}
 		});
 		buttonEdit.addActionListener(e->{
-			buttonBack.setVisible(false);
-			buttonEdit.setVisible(false);
-			buttonDone.setVisible(true);
-			buttonDelete.setVisible(true);
-			panelSouth.add(buttonDone);
-			panelSouth.add(buttonDelete);
-			panelSouth.revalidate();
+			if(allEntryList.getSelectedValue()!=null) {
+				cardManager.show(cardContainer,"Edit");
+			}
+			if(entryList.getSelectedValue()!=null) {
+				cardManager.show(cardContainer,"Edit");
+			}
 			
 			
 		});
+		
+		
+	}
+	public static void Edit(int day,int month,int year,String title) {
+		JPanel panelEdit = new JPanel();
+		cardContainer.add(panelEdit,"Edit");
+		panelEdit.setLayout(new  BorderLayout());
+		//----------------------------------------------panel
+		JPanel panelNorth = new JPanel();
+		JPanel panelCenter = new JPanel();
+		JPanel panelSouth = new JPanel();
+		//--------------------------------------------------label
+		JLabel label = new JLabel("Edit: ");
+		panelNorth.add(label);
+		panelEdit.add(panelNorth,BorderLayout.NORTH);
+		panelEdit.add(panelSouth,BorderLayout.SOUTH);
+		panelEdit.add(panelCenter,BorderLayout.CENTER);
+		
+		//------------------------------------------------textArea
+		JTextArea textEdit = new JTextArea(10,40);
+		JScrollPane pane = new JScrollPane(textEdit);
+		textEdit.setLineWrap(true);
+		textEdit.setWrapStyleWord(true);
+		try {
+			textEdit.setText(TaskDo.getStoryFromDate(year, month, day, title));
+		}catch(SQLException e) {
+			textEdit.setText("Fehler: "+e.getMessage());
+		}
+		panelCenter.add(pane);
+		
+		
 		
 		
 	}

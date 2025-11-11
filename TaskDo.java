@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 
 public class TaskDo {
 	public static void insertTask(String story, String title) {
+		//_________________-ERFOLG________________________
 
 		String query = "INSERT INTO diary_entry(date,story,title) VALUES(?,?,?);";
 
