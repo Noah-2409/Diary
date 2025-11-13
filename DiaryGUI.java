@@ -358,13 +358,15 @@ public class DiaryGUI {
 	buttonDeleteAll.addActionListener(e->{
 		int popUp = JOptionPane.showConfirmDialog(frame,"Delete All ?","Confirm",JOptionPane.YES_NO_OPTION);
 		if(popUp == JOptionPane.YES_OPTION) {
-			try {
+			int popUp2 = JOptionPane.showConfirmDialog(frame,"Really delete all?","Confirm",JOptionPane.YES_NO_OPTION);
+			if(popUp2 == JOptionPane.YES_OPTION) {
+				try {
 				TaskDo.deleteAll();
 			}catch(SQLException E) {
 				int errorPopUp = JOptionPane.showConfirmDialog(frame,"Fehler: "+E.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
 			}
-			
-		}
+			}
+			}
 	});
 		
 		
@@ -377,6 +379,7 @@ public class DiaryGUI {
 		JLabel labelEdit = new JLabel("Edit: ");
 		JLabel labelButtonDone = new JLabel("Done");
 		JLabel labelButtonBack = new JLabel("Back");
+		JLabel labelButtonDelete = new JLabel("Delete");
 		//---------------------------------------------------------textArea
 		JTextArea textEdit = new JTextArea(10,40);
 		JScrollPane pane = new JScrollPane(textEdit);
@@ -386,6 +389,8 @@ public class DiaryGUI {
 		//--------------------------------------------------------Button
 		JButton buttonDone = new JButton();
 		JButton buttonBack = new JButton();
+		JButton buttonDelete = new JButton();
+		buttonDelete.add(labelButtonDelete);
 		buttonDone.add(labelButtonDone);
 		buttonBack.add(labelButtonBack);
 		//--------------------------------------------------------panel
@@ -399,6 +404,7 @@ public class DiaryGUI {
 		panelCenter.add(pane);
 		panelSouth.add(buttonBack);
 		panelSouth.add(buttonDone);
+		panelSouth.add(buttonDelete);
 		//----------------------------------------------------buttonAction
 		buttonDone.addActionListener(e->{
 			int popUp = JOptionPane.showConfirmDialog(frame,"Änderung Speichern ?","Confirm",JOptionPane.YES_NO_OPTION);
@@ -414,8 +420,19 @@ public class DiaryGUI {
 			}
 		});
 		buttonBack.addActionListener(e->{
-			
 			cardManager.show(cardContainer, "Search");
+		});
+		buttonDelete.addActionListener(e->{
+			int popUp = JOptionPane.showConfirmDialog(frame,"Delete?","Confirm",JOptionPane.YES_NO_OPTION);
+			if(popUp == JOptionPane.YES_OPTION) {
+				try{
+				TaskDo.delete(textEdit.getText());
+			}catch(SQLException E) {
+				int errorPopUp = JOptionPane.showConfirmDialog(frame,"Fehler: "+E.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+			}
+			cardManager.show(cardContainer, "Search");
+			}
+			
 		});
 		
 		}

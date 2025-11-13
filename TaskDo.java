@@ -153,6 +153,18 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 			throw e;
 		}
 	}
+	public static void delete(String story) throws SQLException {
+		String query = "DELETE FROM diary_entry WHERE story = ?";
+		
+		try(Connection connect = DB_CONNECTOR.getConnection();
+				PreparedStatement stmt = connect.prepareStatement(query)){
+			stmt.setString(1, story);
+			stmt.execute();
+		}catch(SQLException e) {
+			throw e;
+		}
+	}
+	
 	
 
 }
