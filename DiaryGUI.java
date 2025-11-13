@@ -111,6 +111,7 @@ public class DiaryGUI {
 		JLabel labelTitles = new JLabel("Titles: ");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
 		JLabel labelButtonReload = new JLabel("Reload");
+		JLabel labelButtonDeleteAll = new JLabel("Delete all");
 		//-------------------------------------------------------------------------Buttons-------
 		JButton buttonBack = new JButton();
 		JButton buttonEnter = new JButton();
@@ -118,12 +119,14 @@ public class DiaryGUI {
 		JButton buttonDone = new JButton();
 		JButton buttonDelete = new JButton();
 		JButton buttonReload =new JButton();
+		JButton buttonDeleteAll =new JButton();
 		buttonDone.add(labelButtonDone);
 		buttonDelete.add(labelButtonDelete);
 		buttonBack.add(labelButtonBack);
 		buttonEnter.add(labelButtonEnter);
 		buttonEdit.add(labelButtonEdit);
 		buttonReload.add(labelButtonReload);
+		buttonDeleteAll.add(labelButtonDeleteAll);
 		//-----------------------------------------------------------TextField/Area/List----------
 		JTextField fieldDay = new JTextField(2);
 		JTextField fieldMonth = new JTextField(2);
@@ -189,6 +192,7 @@ public class DiaryGUI {
 		panelWestInNorth.add(labelPanelSearch);
 		panelSouth.add(buttonBack);
 		panelSouth.add(buttonEdit);
+		panelSouth.add(buttonDeleteAll);
 		buttonEdit.setVisible(false);
 		panelNorthInCenter.add(labelDay);
 		panelNorthInCenter.add(fieldDay);
@@ -351,6 +355,18 @@ public class DiaryGUI {
 			
 		});
 		
+	buttonDeleteAll.addActionListener(e->{
+		int popUp = JOptionPane.showConfirmDialog(frame,"Delete All ?","Confirm",JOptionPane.YES_NO_OPTION);
+		if(popUp == JOptionPane.YES_OPTION) {
+			try {
+				TaskDo.deleteAll();
+			}catch(SQLException E) {
+				int errorPopUp = JOptionPane.showConfirmDialog(frame,"Fehler: "+E.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+			}
+			
+		}
+	});
+		
 		
 	}
 	public static void Edit(String text,int day,int month,int year, String title) {
@@ -385,7 +401,8 @@ public class DiaryGUI {
 		panelSouth.add(buttonDone);
 		//----------------------------------------------------buttonAction
 		buttonDone.addActionListener(e->{
-			if(!text.equals(textEdit.getText())) {
+			int popUp = JOptionPane.showConfirmDialog(frame,"Änderung Speichern ?","Confirm",JOptionPane.YES_NO_OPTION);
+			if(popUp==JOptionPane.YES_OPTION) {
 				LocalDate date = LocalDate.of(year, month, day);
 				try {
 					TaskDo.updateEntry(date, title,textEdit.getText());
@@ -394,12 +411,13 @@ public class DiaryGUI {
 				}catch(SQLException E) {
 					System.err.println("Fehler: "+E.getMessage());
 				}
-				}
+			}
 		});
 		buttonBack.addActionListener(e->{
 			
 			cardManager.show(cardContainer, "Search");
 		});
+		
 		}
 	}
 

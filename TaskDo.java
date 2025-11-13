@@ -143,5 +143,16 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 			throw e;
 		}
 	}
+	public static void deleteAll() throws SQLException {
+		String query = "TRUNCATE TABLE diary_entry restart IDENTITY";
+		
+		try(Connection connect = DB_CONNECTOR.getConnection();
+				PreparedStatement stmt = connect.prepareStatement(query)){
+			stmt.execute();
+		}catch(SQLException e) {
+			throw e;
+		}
+	}
+	
 
 }
