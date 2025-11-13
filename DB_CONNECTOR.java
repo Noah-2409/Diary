@@ -2,7 +2,7 @@ package diary;
 import java.sql.*;
 public class DB_CONNECTOR{
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/DiaryTest";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/Diary";
     
    
     private static final String USER = "postgres";

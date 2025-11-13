@@ -3,12 +3,12 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
- * die buttonenter aktion brauch zu lange um ergebnisse zu laden . finde ein weg um es zu optimieren 
- * 
+ * es lääst sich nicht updaten finde feherler in task do oder in done akticion
  */
 
 public class DiaryGUI {
@@ -95,7 +95,6 @@ public class DiaryGUI {
 		
 	}
 	private static void buildSearchFrame() {
-
 		JPanel panelSearch = new JPanel();
 		panelSearch.setLayout(new BorderLayout());
 		cardContainer.add(panelSearch,"Search");
@@ -111,17 +110,20 @@ public class DiaryGUI {
 		JLabel labelAllEntries = new JLabel("All titles : ");
 		JLabel labelTitles = new JLabel("Titles: ");
 		JLabel labelPanelSearch = new JLabel("SearchScreen");
+		JLabel labelButtonReload = new JLabel("Reload");
 		//-------------------------------------------------------------------------Buttons-------
 		JButton buttonBack = new JButton();
 		JButton buttonEnter = new JButton();
 		JButton buttonEdit = new JButton();
 		JButton buttonDone = new JButton();
 		JButton buttonDelete = new JButton();
+		JButton buttonReload =new JButton();
 		buttonDone.add(labelButtonDone);
 		buttonDelete.add(labelButtonDelete);
 		buttonBack.add(labelButtonBack);
 		buttonEnter.add(labelButtonEnter);
 		buttonEdit.add(labelButtonEdit);
+		buttonReload.add(labelButtonReload);
 		//-----------------------------------------------------------TextField/Area/List----------
 		JTextField fieldDay = new JTextField(2);
 		JTextField fieldMonth = new JTextField(2);
@@ -129,6 +131,7 @@ public class DiaryGUI {
 		JTextArea inputEntries = new JTextArea(5,40);
 		JTextArea outputStory = new JTextArea(10,40);
 		JScrollPane paneOutputStory = new JScrollPane(outputStory);
+		
 		
 		outputStory.setLineWrap(true);
 		outputStory.setWrapStyleWord(true);
@@ -199,6 +202,7 @@ public class DiaryGUI {
 		panelCenterInCenter.add(labelAllEntries);
 		panelCenterInCenter.add(paneAllList);
 		panelCenterInCenter.add(paneList);
+		panelCenterInCenter.add(buttonReload);
 		panelCenterInCenter.add(paneOutputStory);
 		//---------------------------------------------------------------Button-Action-----------
 		buttonBack.addActionListener(e->{
@@ -213,6 +217,7 @@ public class DiaryGUI {
 			labelTitles.setVisible(false);
 			panelCenterInCenter.revalidate();
 			buttonEdit.setVisible(false);
+			buttonReload.setVisible(true);
 			panelSouth.revalidate();
 			cardManager.show(cardContainer,"Home");
 			
@@ -221,10 +226,13 @@ public class DiaryGUI {
 		buttonEnter.addActionListener(e->{
 			
 			if(TaskDo.isValidDate(fieldDay,fieldMonth,fieldYear)) {
+				buttonReload.setVisible(false);
 				labelAllEntries.setVisible(false);
-				labelTitles.setVisible(true);
 				paneAllList.setVisible(false);
+				labelTitles.setVisible(true);
+				paneList.setVisible(true);
 				entryListModel.clear();
+				
 				int i=0;
 				
 				while (true) {
@@ -244,7 +252,7 @@ public class DiaryGUI {
 					}
 					
 					}
-				paneList.setVisible(true);
+				
 				panelCenterInCenter.revalidate();
 			}
 			
@@ -274,7 +282,7 @@ public class DiaryGUI {
 				allEntryList.setSelectedValue(e,false);
 				buttonEdit.setVisible(true);
 				panelSouth.revalidate();
-				Edit(day,month,year,title);
+				Edit(outputStory.getText(),day,month,year,title);
 			}
 			}
 			
@@ -309,7 +317,7 @@ public class DiaryGUI {
 				buttonEdit.setVisible(true);
 				entryList.setSelectedValue(e,false);
 				panelSouth.revalidate();
-				Edit(day,month,year,title);
+				Edit(outputStory.getText(),day,month,year,title);
 				
 			}
 			}
@@ -324,40 +332,75 @@ public class DiaryGUI {
 			
 			
 		});
+		buttonReload.addActionListener(e->{
+			allEntryListModel.clear();
+			try {
+				int i= 0;
+				List<String> list = TaskDo.allEntries();
+				while(!list.get(i).isEmpty()) {
+					allEntryListModel.addElement(list.get(i));	
+					i++;
+				}
+					
+			}catch(SQLException E) {
+				System.err.println("Fehler: "+E.getMessage());
+			}catch(IndexOutOfBoundsException E) {
+				
+			}
+			
+			
+		});
 		
 		
 	}
-	public static void Edit(int day,int month,int year,String title) {
+	public static void Edit(String text,int day,int month,int year, String title) {
 		JPanel panelEdit = new JPanel();
 		cardContainer.add(panelEdit,"Edit");
 		panelEdit.setLayout(new  BorderLayout());
-		//----------------------------------------------panel
-		JPanel panelNorth = new JPanel();
-		JPanel panelCenter = new JPanel();
-		JPanel panelSouth = new JPanel();
-		//--------------------------------------------------label
-		JLabel label = new JLabel("Edit: ");
-		panelNorth.add(label);
-		panelEdit.add(panelNorth,BorderLayout.NORTH);
-		panelEdit.add(panelSouth,BorderLayout.SOUTH);
-		panelEdit.add(panelCenter,BorderLayout.CENTER);
-		
-		//------------------------------------------------textArea
+		//---------------------------------------------------------label
+		JLabel labelEdit = new JLabel("Edit: ");
+		JLabel labelButtonDone = new JLabel("Done");
+		JLabel labelButtonBack = new JLabel("Back");
+		//---------------------------------------------------------textArea
 		JTextArea textEdit = new JTextArea(10,40);
 		JScrollPane pane = new JScrollPane(textEdit);
 		textEdit.setLineWrap(true);
 		textEdit.setWrapStyleWord(true);
-		try {
-			textEdit.setText(TaskDo.getStoryFromDate(year, month, day, title));
-		}catch(SQLException e) {
-			textEdit.setText("Fehler: "+e.getMessage());
-		}
+		textEdit.setText(text);
+		//--------------------------------------------------------Button
+		JButton buttonDone = new JButton();
+		JButton buttonBack = new JButton();
+		buttonDone.add(labelButtonDone);
+		buttonBack.add(labelButtonBack);
+		//--------------------------------------------------------panel
+		JPanel panelNorth = new JPanel();
+		JPanel panelCenter = new JPanel();
+		JPanel panelSouth = new JPanel();
+		panelNorth.add(labelEdit);
+		panelEdit.add(panelNorth,BorderLayout.NORTH);
+		panelEdit.add(panelSouth,BorderLayout.SOUTH);
+		panelEdit.add(panelCenter,BorderLayout.CENTER);
 		panelCenter.add(pane);
-		
-		
-		
-		
-	}
+		panelSouth.add(buttonBack);
+		panelSouth.add(buttonDone);
+		//----------------------------------------------------buttonAction
+		buttonDone.addActionListener(e->{
+			if(!text.equals(textEdit.getText())) {
+				LocalDate date = LocalDate.of(year, month, day);
+				try {
+					TaskDo.updateEntry(date, title,textEdit.getText());
+					
+					cardManager.show(cardContainer, "Search");
+				}catch(SQLException E) {
+					System.err.println("Fehler: "+E.getMessage());
+				}
+				}
+		});
+		buttonBack.addActionListener(e->{
+			
+			cardManager.show(cardContainer, "Search");
+		});
+		}
 	}
 
 

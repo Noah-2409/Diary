@@ -129,5 +129,19 @@ public static String getStoryFromDate(int year, int month, int day,String title)
 			
 		}
 	}
+	public static void updateEntry(LocalDate date,String title,String story)throws SQLException{
+		String query = "UPDATE diary_entry set story = ? WHERE date = ? AND title = ?";
+		try(Connection connect = DB_CONNECTOR.getConnection();
+				PreparedStatement stmt = connect.prepareStatement(query)){
+			stmt.setString(1,story);
+			stmt.setDate(2,java.sql.Date.valueOf(date));
+			stmt.setString(3, title);
+			stmt.execute();
+			
+		}catch(SQLException e) {
+			System.err.println("Fehler: "+e.getMessage());
+			throw e;
+		}
+	}
 
 }
