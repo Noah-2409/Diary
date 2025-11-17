@@ -1,5 +1,8 @@
 package diary;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 public class DB_CONNECTOR{
 
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/Diary";

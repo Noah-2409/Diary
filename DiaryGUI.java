@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.*;
@@ -25,14 +26,34 @@ public class DiaryGUI {
 		cardContainer.setLayout(cardManager);
 		
 		//---------------------------------------------------------------------FrameBuild----
-		buildHomeFrame();
+		while(true) {
+			//hier kommt das Passwort hin
+			char[] password = {};
+		JPasswordField passwordField = new JPasswordField();
+		int result =JOptionPane.showConfirmDialog(frame,passwordField,"Password",
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+		
+		if(result==JOptionPane.OK_OPTION) {
+			boolean valid = Arrays.equals(passwordField.getPassword(),password);
+			if(valid) {
+				buildHomeFrame();
 		buildSearchFrame();
-		//----------------------------------------------------------------------Begin--------
 		frame.setVisible(true);
 		cardManager.show(cardContainer,"Home");
+		break;
+			}
+		}else if(result==JOptionPane.CANCEL_OPTION||result==JOptionPane.CLOSED_OPTION){
+			System.exit(0);
+		}
+		}
 		
-	
-	}
+		
+		
+		//----------------------------------------------------------------------Begin--------
+		
+			
+		}
 	private static void buildHomeFrame() {
 		JPanel panelHome = new JPanel();
 		panelHome.setLayout(new BorderLayout());
@@ -51,7 +72,7 @@ public class DiaryGUI {
 		buttonSearch.add(labelButtonSearch);
 		//---------------------------------------------------------------------TextField-------
 		JTextArea textEingabe = new JTextArea(5,40);
-		JTextField textEingabeTitel = new JTextField(20);
+		JTextField textEingabeTitle = new JTextField(20);
 		JScrollPane paneTextArea = new JScrollPane(textEingabe);
 		textEingabe.setLineWrap(true);
 		textEingabe.setWrapStyleWord(true);
@@ -76,21 +97,25 @@ public class DiaryGUI {
 		
 		panelWestInNorth.add(labelPanelHome);
 		panelNorthInCenter.add(labelTextEingabeTitel);
-		panelNorthInCenter.add(textEingabeTitel);
+		panelNorthInCenter.add(textEingabeTitle);
 		panelCenterInCenter.add(labelTextEingabe);
 		panelCenterInCenter.add(paneTextArea);
 		panelSouth.add(buttonSave);
 		panelSouth.add(buttonSearch);
 		//----------------------------------------------------------------------Button-Action-----
 		buttonSearch.addActionListener(e->{
-			cardManager.show(cardContainer,"Search");
+			
+				cardManager.show(cardContainer,"Search");
+			
 		});
 		buttonSave.addActionListener(e->{
-			if(!textEingabe.getText().trim().isEmpty()) {
-				TaskDo.insertTask(textEingabe.getText(),textEingabeTitel.getText());
+			if(!textEingabe.getText().trim().isEmpty()&&
+					!textEingabeTitle.getText().trim().isEmpty()) {
+				
+				TaskDo.insertTask(textEingabe.getText(),textEingabeTitle.getText());
 			}
 			textEingabe.setText(null);
-			textEingabeTitel.setText(null);
+			textEingabeTitle.setText(null);
 		});
 		
 	}
@@ -144,7 +169,7 @@ public class DiaryGUI {
 		
 		inputEntries.setLineWrap(true);
 		inputEntries.setWrapStyleWord(true);
-		
+	
 		DefaultListModel<String> entryListModel = new DefaultListModel<>();
 		JList<String> entryList = new JList<>(entryListModel);
 		JScrollPane paneList = new JScrollPane(entryList);
@@ -211,6 +236,7 @@ public class DiaryGUI {
 		//---------------------------------------------------------------Button-Action-----------
 		buttonBack.addActionListener(e->{
 			entryList.clearSelection();
+			outputStory.setText(null);
 			allEntryList.clearSelection();
 			paneList.setVisible(false);
 			paneAllList.setVisible(true);
@@ -327,6 +353,8 @@ public class DiaryGUI {
 			}
 		});
 		buttonEdit.addActionListener(e->{
+			
+			outputStory.setText(null);
 			if(allEntryList.getSelectedValue()!=null) {
 				cardManager.show(cardContainer,"Edit");
 			}
@@ -334,6 +362,8 @@ public class DiaryGUI {
 				cardManager.show(cardContainer,"Edit");
 			}
 			
+			entryList.clearSelection();
+			allEntryList.clearSelection();
 			
 		});
 		buttonReload.addActionListener(e->{
