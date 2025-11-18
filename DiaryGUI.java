@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
- * es lääst sich nicht updaten finde feherler in task do oder in done akticion
+ * nicht wirklich ein Problem aber beim ändern von einträgen ändert sich das datum auch automatisch
  */
 
 public class DiaryGUI {
@@ -22,13 +22,14 @@ public class DiaryGUI {
 		//-------------------------------------------------------------------BasicSetUp-----
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 		frame.setSize(500,500);
+		frame.setLocationRelativeTo(null);	
 		frame.add(cardContainer);
 		cardContainer.setLayout(cardManager);
 		
 		//---------------------------------------------------------------------FrameBuild----
 		while(true) {
 			//hier kommt das Passwort hin
-			char[] password = {};
+			char[] password = {};                             // HIER NOCH PASSWORT IMPLEMENTIEREN!!!!!
 		JPasswordField passwordField = new JPasswordField();
 		int result =JOptionPane.showConfirmDialog(frame,passwordField,"Password",
 				JOptionPane.OK_CANCEL_OPTION,
@@ -42,6 +43,8 @@ public class DiaryGUI {
 		frame.setVisible(true);
 		cardManager.show(cardContainer,"Home");
 		break;
+			}else {
+				JOptionPane.showMessageDialog(frame,"False Password");
 			}
 		}else if(result==JOptionPane.CANCEL_OPTION||result==JOptionPane.CLOSED_OPTION){
 			System.exit(0);
