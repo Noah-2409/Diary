@@ -29,7 +29,7 @@ public class DiaryGUI {
 		//---------------------------------------------------------------------FrameBuild----
 		while(true) {
 			//hier kommt das Passwort hin
-			char[] password = {};                             // HIER NOCH PASSWORT IMPLEMENTIEREN!!!!!
+			char[] password = {'o','p','e','n','D','i','a','r','y','2','0','0','2'};                             // HIER NOCH PASSWORT IMPLEMENTIEREN!!!!!
 		JPasswordField passwordField = new JPasswordField();
 		int result =JOptionPane.showConfirmDialog(frame,passwordField,"Password",
 				JOptionPane.OK_CANCEL_OPTION,
