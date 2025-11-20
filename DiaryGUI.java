@@ -1,7 +1,11 @@
 package diary;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -9,7 +13,9 @@ import java.util.List;
 
 import javax.swing.*;
 /*----------------------------------------------------------------------------Problems------------
- * nicht wirklich ein Problem aber beim ändern von einträgen ändert sich das datum auch automatisch
+ * 
+ * ERFOLGGG GGGGGGGG GGGG !!!!!!!!!
+ * 
  */
 
 public class DiaryGUI {
@@ -21,35 +27,46 @@ public class DiaryGUI {
 
 		//-------------------------------------------------------------------BasicSetUp-----
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		URL iconURL = DiaryGUI.class.getResource("/diaryIcon.png");
+		ImageIcon icon = new ImageIcon(iconURL);
+		frame.setIconImage(icon.getImage());
 		frame.setSize(500,500);
-		frame.setLocationRelativeTo(null);	
+		frame.setLocationRelativeTo(null);
 		frame.add(cardContainer);
 		cardContainer.setLayout(cardManager);
 		
 		//---------------------------------------------------------------------FrameBuild----
-		while(true) {
-			//hier kommt das Passwort hin
-			char[] password = {'o','p','e','n','D','i','a','r','y','2','0','0','2'};                             // HIER NOCH PASSWORT IMPLEMENTIEREN!!!!!
-		JPasswordField passwordField = new JPasswordField();
-		int result =JOptionPane.showConfirmDialog(frame,passwordField,"Password",
-				JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE);
-		
-		if(result==JOptionPane.OK_OPTION) {
-			boolean valid = Arrays.equals(passwordField.getPassword(),password);
-			if(valid) {
-				buildHomeFrame();
-		buildSearchFrame();
-		frame.setVisible(true);
-		cardManager.show(cardContainer,"Home");
-		break;
-			}else {
-				JOptionPane.showMessageDialog(frame,"False Password");
-			}
-		}else if(result==JOptionPane.CANCEL_OPTION||result==JOptionPane.CLOSED_OPTION){
-			System.exit(0);
-		}
-		}
+//		while(true) {
+//			//hier kommt das Passwort hin
+//			char[] password = {'o','p','e','n','*'};                             // HIER NOCH PASSWORT IMPLEMENTIEREN!!!!!
+//		JPasswordField passwordField = new JPasswordField();
+//		int result =JOptionPane.showConfirmDialog(frame,passwordField,"Password",
+//				JOptionPane.OK_CANCEL_OPTION,
+//				JOptionPane.PLAIN_MESSAGE);
+//		
+//		if(result==JOptionPane.OK_OPTION) {
+//			boolean valid = Arrays.equals(passwordField.getPassword(),password);
+//			if(valid) {
+//				////////////////////////////////////////////////////////////////////////////////////////////////
+//				
+//				Hier muss der Code mit dem Label ,,ScreenOn,,
+//				
+//				////////////////////////////////////////////////////////////////////////////////////////////////
+//				break;
+//			}else {
+//				JOptionPane.showMessageDialog(frame,"False Password");
+//			}
+//		}else if(result==JOptionPane.CANCEL_OPTION||result==JOptionPane.CLOSED_OPTION){
+//			System.exit(0);
+//		}
+//		}
+//		@ScreenOn{
+		buildHomeFrame();
+buildSearchFrame();
+frame.setVisible(true);
+cardManager.show(cardContainer,"Home");
+//}
+	
 		
 		
 		
@@ -85,6 +102,8 @@ public class DiaryGUI {
 		JPanel panelSouth = new JPanel();
 		JPanel panelNorthInCenter = new JPanel();
 		JPanel panelCenterInCenter = new JPanel();
+
+		
 		panelCenter.setLayout(new BorderLayout());
 		panelNorth.setLayout(new BorderLayout());
 		JPanel panelWestInNorth = new JPanel();
